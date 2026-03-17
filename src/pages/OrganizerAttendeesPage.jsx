@@ -1,0 +1,156 @@
+import { useState } from "react"
+import { Search, Filter, Download, Mail, MoreHorizontal, UserCheck, ShieldOff } from "lucide-react"
+import { Button } from "../components/ui/Button"
+import { Card, CardContent } from "../components/ui/Card"
+import { Input } from "../components/ui/Input"
+import { Badge } from "../components/ui/Badge"
+import { Select } from "../components/ui/Select"
+
+const ATTENDEES = [
+  { id: "USR-001", name: "Alex Johnson", email: "alex.j@example.com", event: "Neon Nights Music Festival", ticket: "VIP Access", date: "Aug 01, 2026", status: "Confirmed" },
+  { id: "USR-002", name: "Maria Garcia", email: "m.garcia99@example.com", event: "Neon Nights Music Festival", ticket: "General Admission", date: "Aug 02, 2026", status: "Confirmed" },
+  { id: "USR-003", name: "James Wilson", email: "jwilson.tech@example.com", event: "Tech Startup Pitch Night", ticket: "Investor Pass", date: "Aug 15, 2026", status: "Confirmed" },
+  { id: "USR-004", name: "Sophie Chen", email: "sophie.c@example.com", event: "Web3 Developer Summit", ticket: "Early Bird", date: "Jul 20, 2026", status: "Cancelled" },
+  { id: "USR-005", name: "David Miller", email: "dmiller84@example.com", event: "Yoga & Mindfulness Retreat", ticket: "Standard Registration", date: "Sep 05, 2026", status: "Pending" },
+  { id: "USR-006", name: "Emma Thompson", email: "emma.t.design@example.com", event: "Neon Nights Music Festival", ticket: "General Admission", date: "Aug 10, 2026", status: "Confirmed" },
+  { id: "USR-007", name: "Robert Taylor", email: "rtaylor.music@example.com", event: "Tech Startup Pitch Night", ticket: "Standard Registration", date: "Aug 18, 2026", status: "Confirmed" },
+]
+
+export function OrganizerAttendeesPage() {
+  const [search, setSearch] = useState("")
+  
+  const filteredAttendees = ATTENDEES.filter(a => 
+    a.name.toLowerCase().includes(search.toLowerCase()) || 
+    a.email.toLowerCase().includes(search.toLowerCase()) ||
+    a.event.toLowerCase().includes(search.toLowerCase())
+  )
+
+  return (
+    <div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Attendees</h1>
+          <p className="text-muted-foreground mt-1">Manage registrations across all your events.</p>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" className="gap-2 shrink-0">
+            <Mail className="h-4 w-4" /> Message All
+          </Button>
+          <Button variant="gradient" className="gap-2 shrink-0">
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+        </div>
+      </div>
+
+      <Card className="bg-card mb-8 border-border">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4 justify-between">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search by name, email, or event..." 
+                className="pl-9 bg-muted/50 border-border/50"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex gap-3 w-full md:w-auto">
+              <Select className="bg-muted/50 border-border/50 min-w-[160px]">
+                <option value="">All Events</option>
+                <option value="neon">Neon Nights Festival</option>
+                <option value="tech">Tech Startup Pitch</option>
+              </Select>
+              <Select className="bg-muted/50 border-border/50 min-w-[140px]">
+                <option value="">Status: All</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted/50 text-muted-foreground uppercase text-xs">
+              <tr>
+                <th className="px-6 py-4 font-medium">Attendee</th>
+                <th className="px-6 py-4 font-medium">Event & Ticket</th>
+                <th className="px-6 py-4 font-medium">Registration Date</th>
+                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50">
+              {filteredAttendees.map((attendee) => (
+                <tr key={attendee.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-brand-500/20 text-brand-500 flex items-center justify-center font-bold text-xs shrink-0">
+                        {attendee.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">{attendee.name}</div>
+                        <div className="text-xs text-muted-foreground">{attendee.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-foreground">{attendee.event}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-500"></div>
+                      {attendee.ticket}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">
+                    {attendee.date}
+                  </td>
+                  <td className="px-6 py-4">
+                    <Badge variant="outline" className={`
+                      ${attendee.status === 'Confirmed' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' : ''}
+                      ${attendee.status === 'Pending' ? 'border-amber-500/30 text-amber-500 bg-amber-500/10' : ''}
+                      ${attendee.status === 'Cancelled' ? 'border-red-500/30 text-red-500 bg-red-500/10' : ''}
+                    `}>
+                      {attendee.status}
+                    </Badge>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-emerald-500">
+                        <UserCheck className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500">
+                        <ShieldOff className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filteredAttendees.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                    No attendees found matching your search criteria.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        
+        <div className="p-4 border-t border-border flex items-center justify-between text-sm text-muted-foreground bg-muted/10">
+          <div>Showing 1 to {filteredAttendees.length} of {ATTENDEES.length} entries</div>
+          <div className="flex gap-1">
+            <Button variant="outline" size="sm" disabled>Previous</Button>
+            <Button variant="outline" size="sm" disabled>Next</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -1,22 +1,44 @@
 import { useState } from "react"
 import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
-import { Ticket, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { Ticket, Mail, Lock, User, ArrowRight, Briefcase } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../lib/auth"
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
+  const [role, setRole] = useState("participant") // "participant" or "organizer"
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, you would handle authentication here.
-    // For this UI mockup, we'll just redirect to the dashboard.
-    navigate('/dashboard');
+    
+    // Get form data
+    const formData = new FormData(e.target);
+    const name = formData.get("name") || "Demo User";
+    const email = formData.get("email");
+    
+    // Simulate authentication
+    const userData = {
+      id: Math.random().toString(36).substring(7),
+      name,
+      email,
+      role
+    };
+    
+    login(userData);
+    
+    // Redirect based on role
+    if (role === "organizer") {
+      navigate('/organizer/dashboard');
+    } else {
+      navigate('/');
+    }
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background text-foreground">
       {/* Left Side - Image/Branding */}
       <div className="hidden w-1/2 flex-col justify-between bg-muted p-12 lg:flex relative overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-brand-900/40 to-background/90" />
@@ -33,7 +55,7 @@ export function AuthPage() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary">
             <Ticket className="h-6 w-6 text-white" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white">Eventrix</span>
+          <span className="text-2xl font-bold tracking-tight text-white font-heading">Eventrix</span>
         </div>
 
         <div className="relative z-10 mb-20 text-white">
@@ -51,7 +73,7 @@ export function AuthPage() {
       <div className="flex w-full items-center justify-center p-8 lg:w-1/2">
         <div className="mx-auto w-full max-w-md space-y-6">
           <div className="text-center lg:text-left mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">{isLogin ? "Welcome back" : "Create an account"}</h1>
+            <h1 className="text-3xl font-bold tracking-tight font-heading">{isLogin ? "Welcome back" : "Create an account"}</h1>
             <p className="mt-2 text-muted-foreground">
               {isLogin ? "Enter your details to access your account" : "Join Eventrix to discover and host events"}
             </p>
@@ -75,21 +97,49 @@ export function AuthPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  Or continue with email
                 </span>
               </div>
             </div>
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Role Selection */}
+            <div className="flex rounded-lg border border-border bg-card p-1 mt-4">
+              <button
+                type="button"
+                className={`flex-1 flex items-center justify-center rounded-md py-2 text-sm font-medium transition-all ${
+                  role === "participant" 
+                    ? "bg-brand-500 text-white shadow" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                onClick={() => setRole("participant")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                Participant
+              </button>
+              <button
+                type="button"
+                className={`flex-1 flex items-center justify-center rounded-md py-2 text-sm font-medium transition-all ${
+                  role === "organizer" 
+                    ? "bg-brand-500 text-white shadow" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                onClick={() => setRole("organizer")}
+              >
+                <Briefcase className="mr-2 h-4 w-4" />
+                Organizer
+              </button>
+            </div>
+
+            <form className="space-y-4 pt-2" onSubmit={handleSubmit}>
               {!isLogin && (
                 <div className="space-y-2">
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" placeholder="Full Name" type="text" className="pl-10" required={!isLogin} />
+                    <Input id="name" name="name" placeholder="Full Name" type="text" className="pl-10 bg-card border-border" required={!isLogin} />
                   </div>
                 </div>
               )}
@@ -97,14 +147,14 @@ export function AuthPage() {
               <div className="space-y-2">
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="email" placeholder="name@example.com" type="email" className="pl-10" required />
+                  <Input id="email" name="email" placeholder="name@example.com" type="email" className="pl-10 bg-card border-border" required />
                 </div>
               </div>
               
               <div className="space-y-2">
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="password" placeholder="Password" type="password" className="pl-10" required />
+                  <Input id="password" name="password" placeholder="Password" type="password" className="pl-10 bg-card border-border" required />
                 </div>
               </div>
 
@@ -112,7 +162,7 @@ export function AuthPage() {
                 <div className="space-y-2">
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="confirm-password" placeholder="Confirm Password" type="password" className="pl-10" required={!isLogin} />
+                    <Input id="confirm-password" placeholder="Confirm Password" type="password" className="pl-10 bg-card border-border" required={!isLogin} />
                   </div>
                 </div>
               )}
@@ -120,8 +170,8 @@ export function AuthPage() {
               {isLogin && (
                 <div className="flex items-center justify-between">
                   <label className="flex items-center space-x-2 text-sm">
-                    <input type="checkbox" className="rounded border-gray-300 text-brand-500 focus:ring-brand-500" />
-                    <span>Remember me</span>
+                    <input type="checkbox" className="rounded border-border bg-card text-brand-500 focus:ring-brand-500" />
+                    <span className="text-muted-foreground">Remember me</span>
                   </label>
                   <a href="#" className="text-sm font-medium text-brand-500 hover:text-brand-400">
                     Forgot password?
@@ -129,7 +179,7 @@ export function AuthPage() {
                 </div>
               )}
 
-              <Button type="submit" variant="gradient" className="w-full group">
+              <Button type="submit" variant="primary" className="w-full group bg-brand-600 hover:bg-brand-700">
                 {isLogin ? "Sign In" : "Create Account"}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
@@ -151,11 +201,11 @@ export function AuthPage() {
           
           <div className="mt-8 text-center text-xs text-muted-foreground lg:text-left">
             By clicking continue, you agree to our{" "}
-            <Link to="/terms" className="underline underline-offset-4 hover:text-primary">
+            <Link to="/terms" className="underline underline-offset-4 hover:text-white">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link to="/privacy" className="underline underline-offset-4 hover:text-primary">
+            <Link to="/privacy" className="underline underline-offset-4 hover:text-white">
               Privacy Policy
             </Link>
             .
