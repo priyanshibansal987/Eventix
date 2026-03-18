@@ -16,7 +16,7 @@ const FEATURED_EVENTS = [
     location: "Downtown Arena, LA",
     price: "$85",
     organizer: "LiveNation",
-    image: "https://images.unsplash.com/photo-1533174000220-db92842c161a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4",
     category: "Concert"
   },
   {
@@ -106,28 +106,28 @@ export function HomePage() {
                 <div className="flex-1 relative">
                   <MapPin className="absolute left-3 top-3 h-5 w-5 text-muted-foreground pointer-events-none" />
                   <Select 
-                    className="pl-10 h-10 bg-transparent border-0 ring-0 focus-visible:ring-0 text-foreground cursor-pointer appearance-none"
+                    className="pl-10 h-10 bg-background text-white border border-border focus:outline-none cursor-pointer"
                     value={searchLocation}
                     onChange={(e) => setSearchLocation(e.target.value)}
                   >
-                    <option value="">Any Location</option>
-                    <option value="new york">New York</option>
-                    <option value="los angeles">Los Angeles</option>
-                    <option value="san francisco">San Francisco</option>
+                    <option value="" className="bg-gray-900 text-white">Any Location</option>
+                      <option value="new york" className="bg-gray-900 text-white">New York</option>
+                      <option value="los angeles" className="bg-gray-900 text-white">Los Angeles</option>
+                      <option value="san francisco" className="bg-gray-900 text-white">San Francisco</option>
                   </Select>
                 </div>
                 <div className="hidden md:block w-px bg-border/50 my-2" />
                 <div className="flex-1 relative">
                   <Select 
-                    className="h-10 bg-transparent border-0 ring-0 focus-visible:ring-0 pl-4 text-foreground cursor-pointer appearance-none"
+                    className="h-10 bg-background text-white border border-border pl-4 focus:outline-none cursor-pointer"
                     value={searchCategory}
                     onChange={(e) => setSearchCategory(e.target.value)}
                   >
-                    <option value="">All Categories</option>
-                    <option value="Concert">Concert</option>
-                    <option value="Conference">Conference</option>
-                    <option value="Workshop">Workshop</option>
-                    <option value="Meetup">Meetup</option>
+                    <option value="" className="bg-gray-900 text-white">All Categories</option>
+                       <option value="Concert" className="bg-gray-900 text-white">Concert</option>
+                       <option value="Conference" className="bg-gray-900 text-white">Conference</option>
+                       <option value="Workshop" className="bg-gray-900 text-white">Workshop</option>
+                       <option value="Meetup" className="bg-gray-900 text-white">Meetup</option>
                   </Select>
                 </div>
                 <Button onClick={handleSearch} size="lg" variant="gradient" className="h-10 md:w-32 rounded-xl">

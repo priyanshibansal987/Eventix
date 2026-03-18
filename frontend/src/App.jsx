@@ -22,10 +22,12 @@ import { OrganizerEventsPage } from "./pages/OrganizerEventsPage"
 import { OrganizerAttendeesPage } from "./pages/OrganizerAttendeesPage"
 import { OrganizerAnalyticsPage } from "./pages/OrganizerAnalyticsPage"
 import { CreateEventPage } from "./pages/CreateEventPage"
+import ScrollToTop from "./utills/ScrollToTop"
 
 function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop/>
       <AuthProvider>
         <Routes>
           {/* Public Authentication Route */}
