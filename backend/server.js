@@ -33,9 +33,11 @@ app.use(express.urlencoded({ extended: true }));
 
 import userRoutes from './routes/user.routes.js'
 import eventRoutes from './routes/event.routes.js'
+import bookingRoutes from './routes/booking.routes.js'
 
 app.use('/users',userRoutes);
 app.use('/events',eventRoutes);
+app.use('/bookings', bookingRoutes);
 
 
 app.use(errorHandler);
